@@ -22,8 +22,10 @@ def a_star(start, end, real_distances, heuristic_distances, line_stations):
         # Verifica se o nó já foi visitado
         aux_menor = heapq.nsmallest(1,heap)
         if (current in visited) and (f_score > aux_menor[0][0]):
-            
+            # heapq.heappush(heap,(f_score,current,path))
             continue
+        
+        
         
         iteracoes += 1
 
@@ -31,7 +33,8 @@ def a_star(start, end, real_distances, heuristic_distances, line_stations):
         f_score_current = f_score
         # print(current)
         # Marca o nó como visitado
-        visited.add(current)
+        if current not in visited:
+            visited.add(current)
         print("\nvisitado = ", current)
         # Adiciona o nó ao caminho
         path = path + [current]
@@ -78,10 +81,14 @@ def a_star(start, end, real_distances, heuristic_distances, line_stations):
         menor = heapq.nsmallest(1,heap)
         if menor:
             print("\nmenor           = \t",menor[0][0], menor[0][1], menor[0][2])
-            print("f score current = \t",f_score,"\n\n")
+            print("f score current = \t",f_score_current,"\n\n")
         # Verifica se o nó é o destino
-        if current == end and (menor[0][0] > f_score):
-            break
+        if current == end:
+            if (menor[0][0] > f_score_current):
+                break
+            else:
+                heapq.heappush(heap,(f_score_current,current,path))
+        
         
         #printando a fronteira
         front_heap = list(heap)
@@ -180,8 +187,8 @@ heuristic_distances = [
         [29.8, 21.8, 16.6, 15.4, 17.9, 18.2, 15.6, 27.6, 26.6, 21.2, 35.5, 33.6, 5.1,  0   ]  # Estação E14
     ]
 
-start = "E11"
-end = "E4"
+start = "E1"
+end = "E14"
 
 path, distance, time, lines_traversed, contador, g = a_star(start, end, real_distances, heuristic_distances, line_stations)
 print("Caminho:", " -> ".join(path))
