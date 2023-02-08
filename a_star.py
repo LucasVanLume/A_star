@@ -13,6 +13,7 @@ def a_star(start, end, real_distances, heuristic_distances, line_stations):
     g_scores[start] = 0
     # Variável que armazena o tempo de baldeação
     transfer_time = 0
+    iteracoes = 0
     
     # Loop principal para busca do caminho
     while heap:
@@ -22,10 +23,14 @@ def a_star(start, end, real_distances, heuristic_distances, line_stations):
         if current in visited:
             continue
         
+        iteracoes += 1
+
+        print("\n_____________________________________\niteracao numero : ",iteracoes,"\n")
         f_score_current = f_score
        # print(current)
         # Marca o nó como visitado
         visited.add(current)
+        print("\nvisitado = ", current)
         # Adiciona o nó ao caminho
         path = path + [current]
         
@@ -50,12 +55,13 @@ def a_star(start, end, real_distances, heuristic_distances, line_stations):
             # Calcula o score "g" para o vizinho
             tentative_g_score = g_scores[current] + real_distances[current][neighbor] / 30 + transfer_time / 60
             
-            print(tentative_g_score," ", current)
+            print("\n",tentative_g_score," ", current)
             print(g_scores[neighbor]," ",neighbor)
             print("")
+
             # Verifica se o score "g" calculado é maior que o score "g" atual do vizinho
-            if tentative_g_score >= g_scores[neighbor]:
-                continue
+            '''if tentative_g_score >= g_scores[neighbor]:
+                continue'''
             # Atualiza o score "g" para o vizinho
             g_scores[neighbor] = tentative_g_score
             # Calcula o score "f" (soma de "g" e heurística) para o vizinho
@@ -65,8 +71,8 @@ def a_star(start, end, real_distances, heuristic_distances, line_stations):
         
         menor = heapq.nsmallest(1,heap)
         if menor:
-            print("\nmenor = ",menor[0][0])
-            print("f score current = ",f_score,"\n\n")
+            print("\nmenor           = \t",menor[0][0], menor[0][1])
+            print("f score current = \t",f_score,"\n\n")
         # Verifica se o nó é o destino
         if current == end and (menor[0][0] > f_score):
             break
@@ -176,5 +182,5 @@ print("Caminho:", " -> ".join(path))
 print("Linhas:", " -> ".join(lines_traversed))
 print("Distancia:", distance, "km")
 print("Tempo:", time*60, "horas")
-print("Baldeações:", contador)
+print("Baldeacoes:", contador)
 print("g_score", path[-1], ":", g[path[-1]]*60)
