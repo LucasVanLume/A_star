@@ -51,6 +51,21 @@ def a_star(start, end, real_distances, heuristic_distances, line_stations):
             f_score = g_scores[neighbor] + heuristic_distances[int(neighbor[1:])-1][int(end[1:])-1] / 30 #km/h
             # Adiciona o vizinho à fila de prioridade
             heapq.heappush(heap, (f_score, neighbor, path))
+        
+        #printando a fronteira
+        front_heap = list(heap)
+        front = []
+        front_dist = []
+        
+        for neigh in front_heap:
+            front.append(neigh[1])
+            front_dist.append(neigh[0])
+        
+        print("Fronteira de ", current,": ", end="")
+        for qt_neigh in range(len(front)):
+            print(front[qt_neigh], f", {front_dist[qt_neigh]:.2f} || ", end="")
+            
+        print("")
     
     
     # Cálculo da distância
