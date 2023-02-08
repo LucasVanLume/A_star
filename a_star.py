@@ -1,5 +1,8 @@
 import heapq
 
+# Para realizar testes modificas as variaveis start e end nas linhas 
+# 155 e 156 para as estações desejadas
+
 def a_star(start, end, real_distances, heuristic_distances, line_stations):
     # Inicialização da fila de prioridade heap
     heap = [(0, start, [])]
@@ -18,13 +21,15 @@ def a_star(start, end, real_distances, heuristic_distances, line_stations):
         # Verifica se o nó já foi visitado
         if current in visited:
             continue
+        
+        f_score_current = f_score
+       # print(current)
         # Marca o nó como visitado
         visited.add(current)
         # Adiciona o nó ao caminho
         path = path + [current]
-        # Verifica se o nó é o destino
-        if current == end:
-            break
+        
+        
         # Verifica a linha atual percorrida entre as duas últimas estações do caminho
         if len(path) >= 2:
             station = path[-2]
@@ -40,8 +45,14 @@ def a_star(start, end, real_distances, heuristic_distances, line_stations):
                     transfer_time = 0
                 else:
                     transfer_time = 4
+        
+            
             # Calcula o score "g" para o vizinho
             tentative_g_score = g_scores[current] + real_distances[current][neighbor] / 30 + transfer_time / 60
+            
+            print(tentative_g_score," ", current)
+            print(g_scores[neighbor]," ",neighbor)
+            print("")
             # Verifica se o score "g" calculado é maior que o score "g" atual do vizinho
             if tentative_g_score >= g_scores[neighbor]:
                 continue
@@ -52,8 +63,16 @@ def a_star(start, end, real_distances, heuristic_distances, line_stations):
             # Adiciona o vizinho à fila de prioridade
             heapq.heappush(heap, (f_score, neighbor, path))
         
+        menor = heapq.nsmallest(1,heap)
+        if menor:
+            print("\nmenor = ",menor[0][0])
+            print("f score current = ",f_score,"\n\n")
+        # Verifica se o nó é o destino
+        if current == end and (menor[0][0] > f_score):
+            break
+        
         #printando a fronteira
-        front_heap = list(heap)
+        '''front_heap = list(heap)
         front = []
         front_dist = []
         
@@ -65,7 +84,7 @@ def a_star(start, end, real_distances, heuristic_distances, line_stations):
         for qt_neigh in range(len(front)):
             print(front[qt_neigh], f", {front_dist[qt_neigh]:.2f} || ", end="")
             
-        print("")
+        print("")'''
     
     
     # Cálculo da distância
@@ -149,15 +168,13 @@ heuristic_distances = [
         [29.8, 21.8, 16.6, 15.4, 17.9, 18.2, 15.6, 27.6, 26.6, 21.2, 35.5, 33.6, 5.1,  0   ]  # Estação E14
     ]
 
-start = "E6"
-end = "E8"
+start = "E1"
+end = "E14"
 
 path, distance, time, lines_traversed, contador, g = a_star(start, end, real_distances, heuristic_distances, line_stations)
 print("Caminho:", " -> ".join(path))
 print("Linhas:", " -> ".join(lines_traversed))
 print("Distancia:", distance, "km")
-print("Tempo:", time, "horas")
+print("Tempo:", time*60, "horas")
 print("Baldeações:", contador)
-print("g_score", path[-1], ":", g[path[-1]])
-
-
+print("g_score", path[-1], ":", g[path[-1]]*60)
