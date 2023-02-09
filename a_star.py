@@ -1,7 +1,13 @@
 import heapq
+'''
+Código feito pelos alunos:
+    João Victor Pereira Silvestre Cavalcanti
+    Jorge Francisco de Lima Júnior
+    Lucas Van-Lume Lima
 
-# Para realizar testes modificas as variaveis start e end nas linhas 
-# 155 e 156 para as estações desejadas
+'''
+# Para realizar testes modifique as variaveis start e end nas linhas 
+# 191 e 192 para as estações desejadas
 
 def a_star(start, end, real_distances, heuristic_distances, line_stations):
     # Inicialização da fila de prioridade heap
