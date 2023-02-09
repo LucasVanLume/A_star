@@ -1,4 +1,13 @@
 import heapq
+'''
+Código feito pelos alunos:
+    João Victor Pereira Silvestre Cavalcanti
+    Jorge Francisco de Lima Júnior
+    Lucas Van-Lume Lima
+
+'''
+# Para realizar testes modifique as variaveis start e end nas linhas 
+# 191 e 192 para as estações desejadas
 
 def a_star(start, end, real_distances, heuristic_distances, line_stations):
     # Inicialização da fila de prioridade heap
@@ -10,21 +19,33 @@ def a_star(start, end, real_distances, heuristic_distances, line_stations):
     g_scores[start] = 0
     # Variável que armazena o tempo de baldeação
     transfer_time = 0
+    iteracoes = 0
     
     # Loop principal para busca do caminho
     while heap:
         # Obtém o nó com o menor score "f" (soma de "g" e heurística) da fila de prioridade
         (f_score, current, path) = heapq.heappop(heap)
         # Verifica se o nó já foi visitado
-        if current in visited:
+        aux_menor = heapq.nsmallest(1,heap)
+        if (current in visited) and (f_score > aux_menor[0][0]):
+            # heapq.heappush(heap,(f_score,current,path))
             continue
+        
+        
+        
+        iteracoes += 1
+
+        #print("\n_____________________________________\niteracao numero : ",iteracoes,"\n")
+        f_score_current = f_score
+        # print(current)
         # Marca o nó como visitado
-        visited.add(current)
+        if current not in visited:
+            visited.add(current)
+        #print("\nvisitado = ", current)
         # Adiciona o nó ao caminho
         path = path + [current]
-        # Verifica se o nó é o destino
-        if current == end:
-            break
+        
+        
         # Verifica a linha atual percorrida entre as duas últimas estações do caminho
         if len(path) >= 2:
             station = path[-2]
@@ -40,17 +61,41 @@ def a_star(start, end, real_distances, heuristic_distances, line_stations):
                     transfer_time = 0
                 else:
                     transfer_time = 4
+        
+            
             # Calcula o score "g" para o vizinho
             tentative_g_score = g_scores[current] + real_distances[current][neighbor] / 30 + transfer_time / 60
+            
+            '''print("\n",tentative_g_score," ", current)
+            print(g_scores[neighbor]," ",neighbor)
+            print("")'''
+
             # Verifica se o score "g" calculado é maior que o score "g" atual do vizinho
-            if tentative_g_score >= g_scores[neighbor]:
-                continue
+            '''if tentative_g_score >= g_scores[neighbor]:
+                continue'''
             # Atualiza o score "g" para o vizinho
             g_scores[neighbor] = tentative_g_score
             # Calcula o score "f" (soma de "g" e heurística) para o vizinho
             f_score = g_scores[neighbor] + heuristic_distances[int(neighbor[1:])-1][int(end[1:])-1] / 30 #km/h
             # Adiciona o vizinho à fila de prioridade
             heapq.heappush(heap, (f_score, neighbor, path))
+            #print("\nScore recalculado : ",f_score," ",neighbor," ",path,"\n")
+        
+        
+        ########### teste ################
+        
+        menor = heapq.nsmallest(1,heap)
+        '''if menor:
+            print("\nmenor           = \t",menor[0][0], menor[0][1], menor[0][2])
+            print("f score current = \t",f_score_current,"\n\n")
+        '''
+        # Verifica se o nó é o destino
+        if current == end:
+            if (menor[0][0] > f_score_current):
+                break
+            else:
+                heapq.heappush(heap,(f_score_current,current,path))
+        
         
         #printando a fronteira
         front_heap = list(heap)
@@ -149,15 +194,13 @@ heuristic_distances = [
         [29.8, 21.8, 16.6, 15.4, 17.9, 18.2, 15.6, 27.6, 26.6, 21.2, 35.5, 33.6, 5.1,  0   ]  # Estação E14
     ]
 
-start = "E6"
-end = "E8"
+start = "E11"
+end = "E4"
 
 path, distance, time, lines_traversed, contador, g = a_star(start, end, real_distances, heuristic_distances, line_stations)
 print("Caminho:", " -> ".join(path))
 print("Linhas:", " -> ".join(lines_traversed))
 print("Distancia:", distance, "km")
-print("Tempo:", time, "horas")
-print("Baldeações:", contador)
-print("g_score", path[-1], ":", g[path[-1]])
-
-
+print("Tempo:", time*60, "horas")
+print("Baldeacoes:", contador)
+print("g_score", path[-1], ":", g[path[-1]]*60)
