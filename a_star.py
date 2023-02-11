@@ -4,10 +4,9 @@ Código feito pelos alunos:
     João Victor Pereira Silvestre Cavalcanti
     Jorge Francisco de Lima Júnior
     Lucas Van-Lume Lima
-
 '''
 # Para realizar testes modifique as variaveis start e end nas linhas 
-# 191 e 192 para as estações desejadas
+# 169 e 170 para as estações desejadas
 
 def a_star(start, end, real_distances, heuristic_distances, line_stations):
     # Inicialização da fila de prioridade heap
@@ -28,24 +27,15 @@ def a_star(start, end, real_distances, heuristic_distances, line_stations):
         # Verifica se o nó já foi visitado
         aux_menor = heapq.nsmallest(1,heap)
         if (current in visited) and (f_score > aux_menor[0][0]):
-            # heapq.heappush(heap,(f_score,current,path))
-            continue
-        
-        
-        
+            continue      
         iteracoes += 1
-
-        #print("\n_____________________________________\niteracao numero : ",iteracoes,"\n")
+        # Armazana o f_score do nó atual
         f_score_current = f_score
-        # print(current)
         # Marca o nó como visitado
         if current not in visited:
             visited.add(current)
-        #print("\nvisitado = ", current)
         # Adiciona o nó ao caminho
-        path = path + [current]
-        
-        
+        path = path + [current]        
         # Verifica a linha atual percorrida entre as duas últimas estações do caminho
         if len(path) >= 2:
             station = path[-2]
@@ -61,34 +51,17 @@ def a_star(start, end, real_distances, heuristic_distances, line_stations):
                     transfer_time = 0
                 else:
                     transfer_time = 4
-        
-            
             # Calcula o score "g" para o vizinho
             tentative_g_score = g_scores[current] + real_distances[current][neighbor] / 30 + transfer_time / 60
-            
-            '''print("\n",tentative_g_score," ", current)
-            print(g_scores[neighbor]," ",neighbor)
-            print("")'''
-
-            # Verifica se o score "g" calculado é maior que o score "g" atual do vizinho
-            '''if tentative_g_score >= g_scores[neighbor]:
-                continue'''
             # Atualiza o score "g" para o vizinho
             g_scores[neighbor] = tentative_g_score
             # Calcula o score "f" (soma de "g" e heurística) para o vizinho
             f_score = g_scores[neighbor] + heuristic_distances[int(neighbor[1:])-1][int(end[1:])-1] / 30 #km/h
             # Adiciona o vizinho à fila de prioridade
             heapq.heappush(heap, (f_score, neighbor, path))
-            #print("\nScore recalculado : ",f_score," ",neighbor," ",path,"\n")
         
-        
-        ########### teste ################
         
         menor = heapq.nsmallest(1,heap)
-        '''if menor:
-            print("\nmenor           = \t",menor[0][0], menor[0][1], menor[0][2])
-            print("f score current = \t",f_score_current,"\n\n")
-        '''
         # Verifica se o nó é o destino
         if current == end:
             if (menor[0][0] > f_score_current):
@@ -96,8 +69,7 @@ def a_star(start, end, real_distances, heuristic_distances, line_stations):
             else:
                 heapq.heappush(heap,(f_score_current,current,path))
         
-        
-        #printando a fronteira
+        # Printando as fronteiras
         front_heap = list(heap)
         front = []
         front_dist = []
@@ -130,16 +102,16 @@ def a_star(start, end, real_distances, heuristic_distances, line_stations):
     for i in range(len(lines_traversed) - 1):
         if lines_traversed[i] != lines_traversed[i + 1]:
             contador += 1
-    time = distance / 30 + contador * 4 / 60
-    '''
+    #time = distance / 30 + contador * 4 / 60
+    
     minutes = (distance / 30 + contador * 4 /60) * 60 #time
     minutes, seconds = divmod(minutes * 60, 60)
     hours, minutes = divmod(minutes, 60)
     time = "{:02d}:{:02d}:{:02d}".format(int(hours), int(minutes), int(seconds))
-    '''
+    
     
 
-    return path, distance, time, lines_traversed, contador, g_scores
+    return path, distance, time, lines_traversed, contador
     
 ##################################//#//###################################
 
@@ -194,13 +166,13 @@ heuristic_distances = [
         [29.8, 21.8, 16.6, 15.4, 17.9, 18.2, 15.6, 27.6, 26.6, 21.2, 35.5, 33.6, 5.1,  0   ]  # Estação E14
     ]
 
-start = "E11"
-end = "E4"
+start = "E1"
+end = "E5"
 
-path, distance, time, lines_traversed, contador, g = a_star(start, end, real_distances, heuristic_distances, line_stations)
+path, distance, time, lines_traversed, contador = a_star(start, end, real_distances, heuristic_distances, line_stations)
+print("\n")
 print("Caminho:", " -> ".join(path))
 print("Linhas:", " -> ".join(lines_traversed))
 print("Distancia:", distance, "km")
-print("Tempo:", time*60, "horas")
+print("Tempo:", time, "horas")
 print("Baldeacoes:", contador)
-print("g_score", path[-1], ":", g[path[-1]]*60)
